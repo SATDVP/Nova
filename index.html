@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova Chat</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #09090f;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 500px;
+      margin: auto;
+      min-height: 100vh;
+      background: #101018;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 22px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #242432;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .logo span {
+      color: #7c5cff;
+    }
+
+    .icon {
+      background: #1b1b27;
+      border: 1px solid #29293a;
+      color: white;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      font-size: 18px;
+    }
+
+    .welcome {
+      padding: 25px 20px 15px;
+    }
+
+    .welcome h1 {
+      font-size: 27px;
+      margin-bottom: 7px;
+    }
+
+    .welcome p {
+      color: #858596;
+      font-size: 14px;
+    }
+
+    .search {
+      margin: 10px 20px 20px;
+      background: #191923;
+      border: 1px solid #292938;
+      border-radius: 15px;
+      padding: 14px;
+      color: #9999aa;
+    }
+
+    .chat {
+      margin: 0 15px 10px;
+      padding: 15px;
+      border-radius: 17px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      background: #15151f;
+      border: 1px solid #222230;
+      cursor: pointer;
+    }
+
+    .chat:active {
+      transform: scale(0.98);
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #7c5cff, #a66cff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 19px;
+    }
+
+    .chat-info {
+      flex: 1;
+    }
+
+    .name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .message {
+      color: #858596;
+      font-size: 13px;
+    }
+
+    .online {
+      width: 9px;
+      height: 9px;
+      background: #4ade80;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .bottom {
+      margin-top: auto;
+      padding: 14px;
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #242432;
+      background: #11111a;
+    }
+
+    .nav {
+      color: #777788;
+      background: none;
+      border: none;
+      font-size: 22px;
+      padding: 8px 30px;
+    }
+
+    .nav.active {
+      color: #8b6cff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="header">
+      <div class="logo"><span>✦</span> NOVA</div>
+      <button class="icon">⚙</button>
+    </div>
+
+    <div class="welcome">
+      <h1>Your chats</h1>
+      <p>Talk with your friends.</p>
+    </div>
+
+    <div class="search">
+      🔍 &nbsp; Search chats
+    </div>
+
+    <div class="chat">
+      <div class="avatar">A</div>
+
+      <div class="chat-info">
+        <div class="name">
+          <span class="online"></span> Alex
+        </div>
+
+        <div class="message">
+          Yo bro 😂
+        </div>
+      </div>
+
+      <div style="color:#666677;font-size:12px;">
+        8:42
+      </div>
+    </div>
+
+    <div class="chat">
+      <div class="avatar">S</div>
+
+      <div class="chat-info">
+        <div class="name">
+          <span class="online"></span> Steve
+        </div>
+
+        <div class="message">
+          Wanna play?
+        </div>
+      </div>
+
+      <div style="color:#666677;font-size:12px;">
+        7:31
+      </div>
+    </div>
+
+    <div class="chat">
+      <div class="avatar">R</div>
+
+      <div class="chat-info">
+        <div class="name">Rahul</div>
+
+        <div class="message">
+          See you tomorrow
+        </div>
+      </div>
+
+      <div style="color:#666677;font-size:12px;">
+        Yesterday
+      </div>
+    </div>
+
+    <div class="bottom">
+      <button class="nav active">💬</button>
+      <button class="nav">👥</button>
+      <button class="nav">👤</button>
+    </div>
+
+  </div>
+
+</body>
+</html>
