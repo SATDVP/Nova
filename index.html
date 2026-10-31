@@ -1,235 +1,365 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nova Chat</title>
-
+  <title>NOVA | Chat</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
+    * { box-sizing: border-box; }
     body {
-      background: #09090f;
-      color: white;
-      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #090b14;
+      color: #f4f5ff;
     }
-
-    .app {
-      max-width: 500px;
-      margin: auto;
-      min-height: 100vh;
-      background: #101018;
-      display: flex;
-      flex-direction: column;
+    .wrap { max-width: 900px; margin: auto; padding: 24px; }
+    .brand { font-size: 34px; font-weight: 900; letter-spacing: 5px; color: #9b8cff; }
+    .sub { color: #858ba5; margin-top: 6px; }
+    .panel {
+      background: #131625;
+      border: 1px solid #252a40;
+      border-radius: 18px;
+      padding: 22px;
+      margin-top: 22px;
     }
-
-    .header {
-      padding: 22px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #242432;
-    }
-
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .logo span {
-      color: #7c5cff;
-    }
-
-    .icon {
-      background: #1b1b27;
-      border: 1px solid #29293a;
-      color: white;
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      font-size: 18px;
-    }
-
-    .welcome {
-      padding: 25px 20px 15px;
-    }
-
-    .welcome h1 {
-      font-size: 27px;
-      margin-bottom: 7px;
-    }
-
-    .welcome p {
-      color: #858596;
-      font-size: 14px;
-    }
-
-    .search {
-      margin: 10px 20px 20px;
-      background: #191923;
-      border: 1px solid #292938;
-      border-radius: 15px;
+    input, button {
+      width: 100%;
       padding: 14px;
-      color: #9999aa;
+      margin-top: 12px;
+      border-radius: 10px;
+      font-size: 15px;
     }
-
-    .chat {
-      margin: 0 15px 10px;
-      padding: 15px;
-      border-radius: 17px;
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      background: #15151f;
-      border: 1px solid #222230;
+    input {
+      background: #0b0e19;
+      border: 1px solid #303650;
+      color: white;
+      outline: none;
+    }
+    button {
+      border: 0;
+      background: #8875ff;
+      color: white;
+      font-weight: bold;
       cursor: pointer;
     }
-
-    .chat:active {
-      transform: scale(0.98);
+    button.secondary { background: #252b42; }
+    button:disabled { opacity: .5; }
+    .row { display: flex; gap: 10px; }
+    .row button { flex: 1; }
+    .hidden { display: none !important; }
+    .muted { color: #858ba5; font-size: 13px; }
+    #status { margin-top: 14px; color: #b7adff; white-space: pre-wrap; }
+    #friends button, #requests button {
+      text-align: left;
+      background: #20253a;
+      margin-top: 8px;
     }
-
-    .avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #7c5cff, #a66cff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 19px;
+    #messages {
+      height: 300px;
+      overflow-y: auto;
+      background: #0b0e19;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
     }
-
-    .chat-info {
-      flex: 1;
+    .msg {
+      background: #252b42;
+      padding: 10px 13px;
+      border-radius: 12px;
+      margin: 8px 0;
+      max-width: 85%;
+      overflow-wrap: anywhere;
     }
-
-    .name {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .message {
-      color: #858596;
-      font-size: 13px;
-    }
-
-    .online {
-      width: 9px;
-      height: 9px;
-      background: #4ade80;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 5px;
-    }
-
-    .bottom {
-      margin-top: auto;
-      padding: 14px;
-      display: flex;
-      justify-content: space-around;
-      border-top: 1px solid #242432;
-      background: #11111a;
-    }
-
-    .nav {
-      color: #777788;
-      background: none;
-      border: none;
-      font-size: 22px;
-      padding: 8px 30px;
-    }
-
-    .nav.active {
-      color: #8b6cff;
+    .mine { background: #5142a0; margin-left: auto; }
+    .chatname { color: #b7adff; font-weight: bold; }
+    @media(max-width:600px) {
+      .wrap { padding: 16px; }
+      .row { flex-direction: column; gap: 0; }
     }
   </style>
 </head>
-
 <body>
+  <main class="wrap">
+    <div class="brand">NOVA</div>
+    <div class="sub">Your space. Your conversations.</div>
 
-  <div class="app">
-
-    <div class="header">
-      <div class="logo"><span>✦</span> NOVA</div>
-      <button class="icon">⚙</button>
-    </div>
-
-    <div class="welcome">
-      <h1>Your chats</h1>
-      <p>Talk with your friends.</p>
-    </div>
-
-    <div class="search">
-      🔍 &nbsp; Search chats
-    </div>
-
-    <div class="chat">
-      <div class="avatar">A</div>
-
-      <div class="chat-info">
-        <div class="name">
-          <span class="online"></span> Alex
-        </div>
-
-        <div class="message">
-          Yo bro 😂
-        </div>
+    <section id="auth" class="panel">
+      <h2 id="authTitle">Welcome to NOVA</h2>
+      <p class="muted">Sign in or create your username.</p>
+      <input id="username" placeholder="Username" maxlength="20" autocomplete="username">
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+      <div class="row">
+        <button onclick="signIn()">Log in</button>
+        <button class="secondary" onclick="signUp()">Create account</button>
       </div>
+      <div id="status"></div>
+    </section>
 
-      <div style="color:#666677;font-size:12px;">
-        8:42
-      </div>
-    </div>
-
-    <div class="chat">
-      <div class="avatar">S</div>
-
-      <div class="chat-info">
-        <div class="name">
-          <span class="online"></span> Steve
-        </div>
-
-        <div class="message">
-          Wanna play?
+    <section id="app" class="hidden">
+      <div class="panel">
+        <div class="row">
+          <div style="flex:2">
+            <h2 id="welcome">Welcome!</h2>
+            <p class="muted">NOVA private chat</p>
+          </div>
+          <div style="flex:1">
+            <button class="secondary" onclick="logout()">Log out</button>
+          </div>
         </div>
       </div>
 
-      <div style="color:#666677;font-size:12px;">
-        7:31
+      <div class="panel">
+        <h3>Add a friend</h3>
+        <input id="friendName" placeholder="Enter their exact username">
+        <button onclick="sendRequest()">Send friend request</button>
       </div>
-    </div>
 
-    <div class="chat">
-      <div class="avatar">R</div>
+      <div class="panel">
+        <h3>Friend requests</h3>
+        <div id="requests" class="muted">No requests loaded.</div>
+      </div>
 
-      <div class="chat-info">
-        <div class="name">Rahul</div>
+      <div class="panel">
+        <h3>Your friends</h3>
+        <div id="friends" class="muted">No friends yet.</div>
+      </div>
 
-        <div class="message">
-          See you tomorrow
+      <div class="panel">
+        <h3 id="chatTitle">Your chat</h3>
+        <p class="muted" id="chatHint">Choose a friend to start chatting.</p>
+        <div id="messages"></div>
+        <div class="row">
+          <input id="messageInput" placeholder="Write a message..." maxlength="4000">
+          <button onclick="sendMessage()" style="max-width:100px">Send</button>
         </div>
       </div>
+    </section>
+  </main>
 
-      <div style="color:#666677;font-size:12px;">
-        Yesterday
-      </div>
-    </div>
+<script>
+  // Replace these two values with your own Supabase details.
+  const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
+  const SUPABASE_KEY = "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
 
-    <div class="bottom">
-      <button class="nav active">💬</button>
-      <button class="nav">👥</button>
-      <button class="nav">👤</button>
-    </div>
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  let currentUser = null;
+  let selectedFriend = null;
 
-  </div>
+  function usernameValue() {
+    return document.getElementById("username").value.trim().toLowerCase();
+  }
 
+  function internalEmail(name) {
+    return name + "@nova.invalid";
+  }
+
+  function showStatus(message) {
+    document.getElementById("status").textContent = message;
+  }
+
+  function validUsername(name) {
+    return /^[a-z0-9_]{3,20}$/.test(name);
+  }
+
+  async function signUp() {
+    const name = usernameValue();
+    const password = document.getElementById("password").value;
+
+    if (!validUsername(name)) {
+      return showStatus("Username must be 3-20 characters: letters, numbers or underscores.");
+    }
+    if (password.length < 8) {
+      return showStatus("Use a password with at least 8 characters.");
+    }
+
+    showStatus("Creating your account...");
+    const { data, error } = await db.auth.signUp({
+      email: internalEmail(name),
+      password,
+      options: { data: { username: name } }
+    });
+
+    if (error) return showStatus(error.message);
+    if (!data.session) {
+      return showStatus("Account created. Email confirmation may still be enabled in Supabase.");
+    }
+    showStatus("Account created!");
+    await enterApp(data.user);
+  }
+
+  async function signIn() {
+    const name = usernameValue();
+    const password = document.getElementById("password").value;
+
+    if (!validUsername(name) || !password) {
+      return showStatus("Enter a valid username and password.");
+    }
+
+    showStatus("Logging in...");
+    const { data, error } = await db.auth.signInWithPassword({
+      email: internalEmail(name),
+      password
+    });
+
+    if (error) return showStatus(error.message);
+    await enterApp(data.user);
+  }
+
+  async function enterApp(user) {
+    currentUser = user;
+    document.getElementById("auth").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    document.getElementById("welcome").textContent =
+      "Welcome, " + (user.user_metadata.username || "NOVA user");
+    await loadRequests();
+    await loadFriends();
+  }
+
+  async function logout() {
+    await db.auth.signOut();
+    currentUser = null;
+    selectedFriend = null;
+    document.getElementById("app").classList.add("hidden");
+    document.getElementById("auth").classList.remove("hidden");
+    document.getElementById("messages").innerHTML = "";
+    showStatus("Logged out.");
+  }
+
+  async function sendRequest() {
+    const name = document.getElementById("friendName").value.trim().toLowerCase();
+    if (!validUsername(name)) return alert("Enter a valid username.");
+
+    const { data: profile, error: lookupError } = await db
+      .from("profiles").select("id,username").eq("username", name).maybeSingle();
+
+    if (lookupError || !profile) return alert("Username not found.");
+    if (profile.id === currentUser.id) return alert("You cannot add yourself.");
+
+    const { error } = await db.from("friend_requests").insert({
+      requester_id: currentUser.id,
+      addressee_id: profile.id
+    });
+
+    if (error) return alert(error.message);
+    document.getElementById("friendName").value = "";
+    alert("Friend request sent!");
+  }
+
+  async function loadRequests() {
+    const area = document.getElementById("requests");
+    const { data, error } = await db.from("friend_requests")
+      .select("id,requester_id")
+      .eq("addressee_id", currentUser.id)
+      .eq("status", "pending");
+
+    if (error) { area.textContent = error.message; return; }
+    area.innerHTML = "";
+
+    for (const request of data) {
+      const { data: profile } = await db.from("profiles")
+        .select("username").eq("id", request.requester_id).maybeSingle();
+
+      const button = document.createElement("button");
+      button.textContent = "Accept " + (profile?.username || "request");
+      button.onclick = () => acceptRequest(request.id);
+      area.appendChild(button);
+    }
+    if (!data.length) area.textContent = "No pending requests.";
+  }
+
+  async function acceptRequest(id) {
+    const { error } = await db.from("friend_requests")
+      .update({ status: "accepted" }).eq("id", id);
+    if (error) return alert(error.message);
+    await loadRequests();
+    await loadFriends();
+  }
+
+  async function loadFriends() {
+    const area = document.getElementById("friends");
+    const { data, error } = await db.from("friend_requests")
+      .select("requester_id,addressee_id")
+      .eq("status", "accepted")
+      .or("requester_id.eq." + currentUser.id + ",addressee_id.eq." + currentUser.id);
+
+    if (error) { area.textContent = error.message; return; }
+    area.innerHTML = "";
+
+    for (const friendship of data) {
+      const id = friendship.requester_id === currentUser.id
+        ? friendship.addressee_id : friendship.requester_id;
+      const { data: profile } = await db.from("profiles")
+        .select("id,username").eq("id", id).maybeSingle();
+
+      if (!profile) continue;
+      const button = document.createElement("button");
+      button.textContent = "Chat with " + profile.username;
+      button.onclick = () => openChat(profile);
+      area.appendChild(button);
+    }
+    if (!area.children.length) area.textContent = "Add a friend to get started.";
+  }
+
+  async function openChat(friend) {
+    selectedFriend = friend;
+    document.getElementById("chatTitle").textContent = "Chat with " + friend.username;
+    document.getElementById("chatHint").textContent = "Messages are private to this conversation.";
+    await loadMessages();
+  }
+
+  async function loadMessages() {
+    if (!selectedFriend) return;
+    const { data, error } = await db.from("messages")
+      .select("sender_id,content,created_at")
+      .or(
+        "and(sender_id.eq." + currentUser.id + ",receiver_id.eq." + selectedFriend.id + ")," +
+        "and(sender_id.eq." + selectedFriend.id + ",receiver_id.eq." + currentUser.id + ")"
+      )
+      .order("created_at", { ascending: true });
+
+    const area = document.getElementById("messages");
+    if (error) { area.textContent = error.message; return; }
+    area.innerHTML = "";
+
+    for (const message of data) {
+      const bubble = document.createElement("div");
+      bubble.className = "msg" + (message.sender_id === currentUser.id ? " mine" : "");
+      bubble.textContent = message.content;
+      area.appendChild(bubble);
+    }
+    area.scrollTop = area.scrollHeight;
+  }
+
+  async function sendMessage() {
+    if (!selectedFriend) return alert("Choose a friend first.");
+    const input = document.getElementById("messageInput");
+    const content = input.value.trim();
+    if (!content) return;
+
+    const { error } = await db.from("messages").insert({
+      sender_id: currentUser.id,
+      receiver_id: selectedFriend.id,
+      content
+    });
+
+    if (error) return alert(error.message);
+    input.value = "";
+    await loadMessages();
+  }
+
+  db.auth.getSession().then(({ data }) => {
+    if (data.session) enterApp(data.session.user);
+  });
+
+  // Refresh the open conversation and incoming requests periodically.
+  setInterval(() => {
+    if (currentUser) {
+      loadRequests();
+      if (selectedFriend) loadMessages();
+    }
+  }, 4000);
+</script>
 </body>
 </html>
